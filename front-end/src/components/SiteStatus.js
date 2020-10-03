@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const SiteStatus = ({ site }) => {
+const SiteStatus = ({ site, setTotalSitesLoading, setTotalSitesUp }) => {
     const [status, setStatus] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const [isUp, setIsUp] = useState(false);
+    const [isDown, setIsDown] = useState(false);
 
     useEffect(() => {
+        setTotalSitesLoading((prevTotalSitesLoading) => prevTotalSitesLoading + 1);
+
         axios.get('http://localhost:3000/monitor/' + site.url)
             .then((res) => {
                 setStatus(res.data);
+                setIsUp(true);
+                setTotalSitesUp((prevTotalSitesUp) => prevTotalSitesUp + 1);
+
                 setIsLoading(false);
+                setTotalSitesLoading((prevTotalSitesLoading) => prevTotalSitesLoading - 1);
             })
             .catch((err) => console.log(err));
     }, []);
@@ -48,15 +56,11 @@ const SiteStatus = ({ site }) => {
                 </p>
             </div>
             <div className="ml-auto mr-3">
-                {!isLoading ? (
+                {!isLoading && isUp ? (
                     <div className="text-green-400 font-bold text-sm px-3 py-1 rounded-full">
                         {status.responseEnd}ms
                     </div>
-                ) : (
-                    <div className="text-gray-500 font-bold text-sm px-3 py-1 rounded-full">
-                        0ms
-                    </div>
-                )}
+                ) : null}
             </div>
         </div>
     );

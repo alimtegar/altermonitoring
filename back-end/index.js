@@ -25,6 +25,7 @@ const monitor = (req, res) => {
         await client.send('Performance.enable');
 
         await page.goto(url, { waitUntil: 'networkidle2' });
+        await page.setCacheEnabled(false);
 
         const performanceMetrics = await client.send('Performance.getMetrics');
         const performanceTiming = JSON.parse(
